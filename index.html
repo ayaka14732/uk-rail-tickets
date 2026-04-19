@@ -36,12 +36,15 @@
 
     .note { display: block; margin-top: 4px; font-size: 13px; color: #666; }
 
-    .thumb { height: 200px; cursor: zoom-in; display: block; }
+    table img { height: 200px; cursor: zoom-in; display: block; }
 
     #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 999; }
     #lightbox.open { display: flex; }
     #lightbox img { max-width: 90vw; max-height: 90vh; }
     #lightbox-close { position: fixed; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; user-select: none; }
+
+    main h2 { margin: 32px 0 16px; }
+    main h2:first-child { margin-top: 0; }
 
     .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .toolbar button { padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 14px; }
@@ -56,6 +59,7 @@
   </header>
 
   <main>
+    <h2>Train Ticket</h2>
     <div class="toolbar">
       <button id="btn-sort">Sort by Type</button>
     </div>
@@ -71,6 +75,20 @@
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <h2>Sales Receipt</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Sample Station</th>
+            <th>Sample Receipt</th>
+          </tr>
+        </thead>
+        <tbody id="sales-receipt-table-body"></tbody>
       </table>
     </div>
   </main>
@@ -119,7 +137,8 @@
         { station: "Letchworth Garden City", ticket: "tickets/0015.jpg", receipt: "tickets/0016.jpg", type: "3" }
       ]},
       { operator: "Great Western Railway", rows: [
-        { station: { text: "London Paddington", note: "To be confirmed if it was a GWR ticket machine" }, ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "6" }
+        { station: "London Paddington", ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "6" },
+        { station: "London Paddington", ticket: "tickets/0046.jpg", receipt: "tickets/0047.jpg", type: "3" }
       ]},
       { operator: "Greater Anglia", rows: [
         { station: "London Liverpool Street", ticket: "tickets/0014.jpg", receipt: "No receipt provided", type: "3" }
@@ -130,7 +149,7 @@
       { operator: "Hull Trains", rows: [
         { station: "", ticket: "", receipt: "", type: "" }
       ]},
-      { operator: "London North Eastern Railway", rows: [
+      { operator: "LNER", rows: [
         { station: "Newcastle", ticket: "tickets/0021.jpg", receipt: "tickets/0022.jpg", type: "5" }
       ]},
       { operator: "London Northwestern Railway", rows: [
@@ -160,11 +179,13 @@
         { station: "London Charing Cross", ticket: "tickets/0023.jpg", receipt: "tickets/0024.jpg", type: "3" }
       ]},
       { operator: "Southern", rows: [
-        { station: { text: "London Victoria", note: "To be confirmed if it was a Southern ticket machine" }, ticket: "tickets/0042.jpg", receipt: "tickets/0043.jpg", type: "3" }
+        { station: "", ticket: "", receipt: "", type: "" }
+        // { station: { text: "London Victoria", note: "To be confirmed if it was a Southern ticket machine" }, ticket: "tickets/0042.jpg", receipt: "tickets/0043.jpg", type: "3" }
       ]},
       { operator: "Thameslink", rows: [
         { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "3" },
-        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" }
+        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" },
+        { station: "Bedford", ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "3b" }
       ]},
       { operator: "TransPennine Express", rows: [
         { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
@@ -175,9 +196,11 @@
       { operator: "West Midlands Railway", rows: [
         { station: "", ticket: "", receipt: "", type: "" }
       ]},
+      { operator: "London Southend Airport", rows: [
+        { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "9" }
+      ]},
       { operator: "Miscellaneous", rows: [
-        { station: { text: "London St Pancras International", note: "Very rare — not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" },
-        { station: { text: "Southend Airport", note: "To be confirmed if it was a Greater Anglia ticket machine" }, ticket: "Lost", receipt: "tickets/0044.jpg", type: "9" }
+        { station: { text: "London St Pancras International", note: "Very rare — not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" }
       ]},
     ];
 
@@ -212,16 +235,13 @@
       return td;
     }
 
-    function bindLightbox() {
-      document.querySelectorAll('table img').forEach(img => {
-        img.classList.add('thumb');
-        img.onclick = e => {
-          e.stopPropagation();
-          document.getElementById('lightbox-img').src = img.src;
-          document.getElementById('lightbox').classList.add('open');
-        };
-      });
-    }
+    document.querySelector('main').addEventListener('click', e => {
+      const img = e.target.closest('table img');
+      if (!img) return;
+      e.stopPropagation();
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('open');
+    });
 
     function buildTable(data, group) {
       const tbody = document.getElementById('table-body');
@@ -258,7 +278,6 @@
         });
       }
 
-      bindLightbox();
     }
 
     let sorted = false;
@@ -282,6 +301,28 @@
     };
 
     buildTable(tableData, true);
+
+    const salesReceiptData = [
+      { operator: "Elizabeth line", station: "London Paddington", receipt: "White Thermal Paper Receipt" },
+      { operator: "London Northwestern Railway", station: "London Euston", receipt: "tickets/0053.jpg" },
+      { operator: "ScotRail", station: "Charing Cross (Glasgow)", receipt: "tickets/0052.jpg" },
+      { operator: "Southeastern", station: "London Victoria", receipt: "tickets/0049.jpg" },
+      { operator: "Southern", station: "London Victoria", receipt: "tickets/0048.jpg" },
+    ];
+
+    function buildSalesReceiptTable(data) {
+      const tbody = document.getElementById('sales-receipt-table-body');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.appendChild(renderCell(row.operator));
+        tr.appendChild(renderCell(row.station));
+        tr.appendChild(renderCell(row.receipt));
+        tbody.appendChild(tr);
+      });
+    }
+
+    buildSalesReceiptTable(salesReceiptData);
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
