@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.">
+  <meta name="keywords" content="UK train tickets, train ticket samples, British rail tickets, train ticket collection, UK rail, train operators, collection receipts">
+  <title>UK Train Ticket Samples</title>
+  <style>
+    body {
+      font-family: 'Arial', system-ui, sans-serif;
+      margin: 0;
+    }
+
+    header {
+      padding: 17px 20px;
+      text-align: center;
+    }
+
+    header h1 { margin-bottom: 12px; }
+    header p { color: #555; margin: 0; }
+
+    main {
+      max-width: 1300px;
+      margin: 17px auto;
+      padding: 0 16px 48px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td { padding: 12px 16px; vertical-align: middle; border: 1px solid #ccc; text-align: left; }
+
+    .note { display: block; margin-top: 4px; font-size: 13px; color: #666; }
+
+    .thumb { height: 200px; cursor: zoom-in; display: block; }
+
+    #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 999; }
+    #lightbox.open { display: flex; }
+    #lightbox img { max-width: 90vw; max-height: 90vh; }
+    #lightbox-close { position: fixed; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; user-select: none; }
+
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { background: #f5f5f5; }
+    th.sortable::after { content: ' ⇅'; opacity: 0.4; font-size: 12px; }
+    th.sortable.asc::after { content: ' ▲'; opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>UK Train Ticket Samples</h1>
+    <p>A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.</p>
+  </header>
+
+  <main>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Sample Station</th>
+            <th>Sample Ticket</th>
+            <th>Sample Collection Receipt</th>
+            <th id="th-type" class="sortable">Type</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div id="lightbox" onclick="this.classList.remove('open')">
+    <span id="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">&times;</span>
+    <img id="lightbox-img" src="tickets/">
+  </div>
+
+  <script>
+    // Cell value formats:
+    //   ""               — empty cell
+    //   "tickets/0007.jpg" — image (detected by extension)
+    //   "N/A"            — plain text
+    //   { img: "...", note: "..." }  — image with note
+    //   { text: "...", note: "..." } — text with note
+    const tableData = [
+      { operator: "Avanti West Coast", rows: [
+        { station: "Liverpool Lime Street", ticket: "tickets/0007.jpg", receipt: "tickets/0008.jpg", type: "4" }
+      ]},
+      { operator: "c2c", rows: [
+        { station: "Southend Central", ticket: "tickets/0031.jpg", receipt: "tickets/0032.jpg", type: "4" }
+      ]},
+      { operator: "Caledonian Sleeper", rows: [
+        { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
+      ]},
+      { operator: "Chiltern Railways", rows: [
+        { station: "London Marylebone", ticket: "tickets/0002.jpg", receipt: "tickets/0004.jpg", type: "5" }
+      ]},
+      { operator: "CrossCountry", rows: [
+        { station: "(Online via Post)", ticket: "tickets/0013.jpg", receipt: "No receipt provided", type: "1" }
+      ]},
+      { operator: "East Midlands Railway", rows: [
+        { station: "Leicester", ticket: "tickets/0017.jpg", receipt: "tickets/0018.jpg", type: "3" }
+      ]},
+      { operator: "Elizabeth line", rows: [
+        { station: "Canary Wharf", ticket: "tickets/0035.jpg", receipt: "tickets/0036.jpg", type: "7" }
+      ]},
+      { operator: "Gatwick Express", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "Grand Central", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "Great Northern", rows: [
+        { station: "Letchworth Garden City", ticket: "tickets/0015.jpg", receipt: "tickets/0016.jpg", type: "3" }
+      ]},
+      { operator: "Great Western Railway", rows: [
+        { station: { text: "London Paddington", note: "To be confirmed if it was really a GWR ticket machine" }, ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "6" }
+      ]},
+      { operator: "Greater Anglia", rows: [
+        { station: "London Liverpool Street", ticket: "tickets/0014.jpg", receipt: "No receipt provided", type: "3" }
+      ]},
+      { operator: "Heathrow Express", rows: [
+        { station: "Heathrow Terminals 2 & 3", ticket: "tickets/0033.jpg", receipt: "tickets/0034.jpg", type: "7" }
+      ]},
+      { operator: "Hull Trains", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "London North Eastern Railway", rows: [
+        { station: "Newcastle", ticket: "tickets/0021.jpg", receipt: "tickets/0022.jpg", type: "5" }
+      ]},
+      { operator: "London Northwestern Railway", rows: [
+        { station: "Milton Keynes Central", ticket: "tickets/0019.jpg", receipt: "tickets/0020.jpg", type: "3" }
+      ]},
+      { operator: "London Overground", rows: [
+        { station: "Rotherhithe", ticket: "tickets/0001.jpg", receipt: "tickets/0003.jpg", type: "8" }
+      ]},
+      { operator: "Lumo", rows: [
+        { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
+      ]},
+      { operator: "Merseyrail", rows: [
+        { station: "Liverpool Lime Street", ticket: "tickets/0010.jpg", receipt: "tickets/0011.jpg", type: "3" },
+        { station: "Liverpool South Parkway (Ticket Office)", ticket: { img: "tickets/0012.jpg", note: "To be confirmed" }, receipt: "White Thermal Paper Receipt", type: "9" }
+      ]},
+      { operator: "Northern", rows: [
+        { station: "Liverpool South Parkway", ticket: "tickets/0005.jpg", receipt: "tickets/0006.jpg", type: "5" }
+      ]},
+      { operator: "ScotRail", rows: [
+        { station: "Glasgow Airport Express Bus", ticket: "tickets/0027.jpg", receipt: "tickets/0028.jpg", type: "3" },
+        { station: "Some station (Ticket Office)", ticket: "", receipt: "", type: "9" }
+      ]},
+      { operator: "South Western Railway", rows: [
+        { station: "Southampton Airport Parkway", ticket: "tickets/0029.jpg", receipt: "tickets/0030.jpg", type: "3" }
+      ]},
+      { operator: "Southeastern", rows: [
+        { station: "London Charing Cross", ticket: "tickets/0023.jpg", receipt: "tickets/0024.jpg", type: "3" }
+      ]},
+      { operator: "Southern", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "Thameslink", rows: [
+        { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "3" },
+        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed" }, receipt: "White Thermal Paper Receipt", type: "9" }
+      ]},
+      { operator: "TransPennine Express", rows: [
+        { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
+      ]},
+      { operator: "Transport for Wales", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "West Midlands Railway", rows: [
+        { station: "", ticket: "", receipt: "", type: "" }
+      ]},
+      { operator: "Miscellaneous", rows: [
+        { station: { text: "London St Pancras International", note: "Very rare — not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" }
+      ]},
+    ];
+
+    function renderCell(value) {
+      const td = document.createElement('td');
+      if (!value) return td;
+
+      if (typeof value === 'string') {
+        if (/\.(jpe?g|png|gif|webp)$/i.test(value)) {
+          const img = document.createElement('img');
+          img.src = value;
+          td.appendChild(img);
+        } else {
+          td.textContent = value;
+        }
+      } else {
+        if (value.img) {
+          const img = document.createElement('img');
+          img.src = value.img;
+          td.appendChild(img);
+        } else if (value.text) {
+          td.appendChild(document.createTextNode(value.text));
+        }
+        if (value.note) {
+          const span = document.createElement('span');
+          span.className = 'note';
+          span.textContent = value.note;
+          td.appendChild(span);
+        }
+      }
+
+      return td;
+    }
+
+    function bindLightbox() {
+      document.querySelectorAll('table img').forEach(img => {
+        img.classList.add('thumb');
+        img.onclick = e => {
+          e.stopPropagation();
+          document.getElementById('lightbox-img').src = img.src;
+          document.getElementById('lightbox').classList.add('open');
+        };
+      });
+    }
+
+    function buildTable(data, group) {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      if (group) {
+        data.forEach(({ operator, rows }) => {
+          rows.forEach((row, i) => {
+            const tr = document.createElement('tr');
+            if (i === 0) {
+              const td = document.createElement('td');
+              td.textContent = operator;
+              if (rows.length > 1) td.rowSpan = rows.length;
+              tr.appendChild(td);
+            }
+            tr.appendChild(renderCell(row.station));
+            tr.appendChild(renderCell(row.ticket));
+            tr.appendChild(renderCell(row.receipt));
+            tr.appendChild(renderCell(row.type));
+            tbody.appendChild(tr);
+          });
+        });
+      } else {
+        data.forEach(({ operator, row }) => {
+          const tr = document.createElement('tr');
+          const td = document.createElement('td');
+          td.textContent = operator;
+          tr.appendChild(td);
+          tr.appendChild(renderCell(row.station));
+          tr.appendChild(renderCell(row.ticket));
+          tr.appendChild(renderCell(row.receipt));
+          tr.appendChild(renderCell(row.type));
+          tbody.appendChild(tr);
+        });
+      }
+
+      bindLightbox();
+    }
+
+    let sorted = false;
+    const thType = document.getElementById('th-type');
+
+    thType.onclick = () => {
+      sorted = !sorted;
+      thType.className = 'sortable' + (sorted ? ' asc' : '');
+
+      if (!sorted) {
+        buildTable(tableData, true);
+      } else {
+        const flat = tableData.flatMap(({ operator, rows }) => rows.map(row => ({ operator, row })));
+        flat.sort((a, b) => {
+          const ta = a.row.type || '\uffff';
+          const tb = b.row.type || '\uffff';
+          return ta.localeCompare(tb, undefined, { numeric: true });
+        });
+        buildTable(flat, false);
+      }
+    };
+
+    buildTable(tableData, true);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
+    });
+  </script>
+</body>
+</html>
