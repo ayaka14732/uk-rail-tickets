@@ -36,7 +36,7 @@
 
     .note { display: block; margin-top: 4px; font-size: 13px; color: #666; }
 
-    .thumb { height: 200px; cursor: zoom-in; display: block; }
+    table img { height: 200px; cursor: zoom-in; display: block; }
 
     #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 999; }
     #lightbox.open { display: flex; }
@@ -235,16 +235,13 @@
       return td;
     }
 
-    function bindLightbox() {
-      document.querySelectorAll('table img').forEach(img => {
-        img.classList.add('thumb');
-        img.onclick = e => {
-          e.stopPropagation();
-          document.getElementById('lightbox-img').src = img.src;
-          document.getElementById('lightbox').classList.add('open');
-        };
-      });
-    }
+    document.querySelector('main').addEventListener('click', e => {
+      const img = e.target.closest('table img');
+      if (!img) return;
+      e.stopPropagation();
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('open');
+    });
 
     function buildTable(data, group) {
       const tbody = document.getElementById('table-body');
@@ -281,7 +278,6 @@
         });
       }
 
-      bindLightbox();
     }
 
     let sorted = false;
@@ -324,7 +320,6 @@
         tr.appendChild(renderCell(row.receipt));
         tbody.appendChild(tr);
       });
-      bindLightbox();
     }
 
     buildSalesReceiptTable(salesReceiptData);
