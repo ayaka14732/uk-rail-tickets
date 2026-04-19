@@ -43,10 +43,9 @@
     #lightbox img { max-width: 90vw; max-height: 90vh; }
     #lightbox-close { position: fixed; top: 16px; right: 20px; color: white; font-size: 32px; cursor: pointer; user-select: none; }
 
-    th.sortable { cursor: pointer; user-select: none; }
-    th.sortable:hover { background: #f5f5f5; }
-    th.sortable::after { content: ' ⇅'; opacity: 0.4; font-size: 12px; }
-    th.sortable.asc::after { content: ' ▲'; opacity: 1; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .toolbar button { padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 14px; }
+    .toolbar button:hover { background: #f0f0f0; }
   </style>
 </head>
 <body>
@@ -57,6 +56,9 @@
   </header>
 
   <main>
+    <div class="toolbar">
+      <button id="btn-sort">Sort by Type</button>
+    </div>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -65,7 +67,7 @@
             <th>Sample Station</th>
             <th>Sample Ticket</th>
             <th>Sample Collection Receipt</th>
-            <th id="th-type" class="sortable">Type</th>
+            <th>Type</th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -142,7 +144,7 @@
       ]},
       { operator: "Merseyrail", rows: [
         { station: "Liverpool Lime Street", ticket: "tickets/0010.jpg", receipt: "tickets/0011.jpg", type: "3" },
-        { station: "Liverpool South Parkway (Ticket Office)", ticket: { img: "tickets/0012.jpg", note: "To be confirmed" }, receipt: "White Thermal Paper Receipt", type: "9" }
+        { station: "Liverpool South Parkway (Ticket Office)", ticket: { img: "tickets/0012.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" }
       ]},
       { operator: "Northern", rows: [
         { station: "Liverpool South Parkway", ticket: "tickets/0005.jpg", receipt: "tickets/0006.jpg", type: "5" }
@@ -162,7 +164,7 @@
       ]},
       { operator: "Thameslink", rows: [
         { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "3" },
-        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed" }, receipt: "White Thermal Paper Receipt", type: "9" }
+        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" }
       ]},
       { operator: "TransPennine Express", rows: [
         { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
@@ -260,11 +262,11 @@
     }
 
     let sorted = false;
-    const thType = document.getElementById('th-type');
+    const btnSort = document.getElementById('btn-sort');
 
-    thType.onclick = () => {
+    btnSort.onclick = () => {
       sorted = !sorted;
-      thType.className = 'sortable' + (sorted ? ' asc' : '');
+      btnSort.textContent = sorted ? 'Restore Default Order' : 'Sort by Type';
 
       if (!sorted) {
         buildTable(tableData, true);
