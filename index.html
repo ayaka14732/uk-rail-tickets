@@ -13,16 +13,16 @@
     }
 
     header {
-      padding: 17px 20px;
+      padding: 18px 20px;
       text-align: center;
     }
 
-    header h1 { margin-bottom: 12px; }
+    header h1 { margin: 14px 0; }
     header p { color: #555; margin: 0; }
 
     main {
       max-width: 1300px;
-      margin: 17px auto;
+      margin: 18px auto;
       padding: 0 16px 48px;
       overflow-x: auto;
     }
@@ -49,12 +49,18 @@
     .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .toolbar button { padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 14px; }
     .toolbar button:hover { background: #f0f0f0; }
+
+    .table-notes { margin: 12px 0 0; padding-left: 20px; font-size: 14px; color: #555; line-height: 1.6; }
+    .table-notes li { margin-bottom: 4px; }
+
+    footer { padding: 24px 20px; text-align: center; font-size: 14px; color: #777; border-top: 1px solid #e0e0e0; }
+    footer a { color: #555; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>UK Train Ticket Samples</h1>
+    <h1>UK Train Ticket Samples (2024-2026)</h1>
     <p>A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.</p>
   </header>
 
@@ -77,6 +83,11 @@
         <tbody id="table-body"></tbody>
       </table>
     </div>
+    <ol class="table-notes">
+      <li>The Train Tickets listed are all of the Ticket on Departure (ToD) type, meaning they were purchased online and collected at a Ticket Vending Machine (TVM). Other purchase methods (e.g. buying directly at the station) are not covered here.</li>
+      <li>Operator refers to the operator labelled on the Ticket Vending Machine (TVM), which may differ from the station's managing operator. For example, London Victoria is managed by Network Rail, but its TVMs include those branded Southern and Southeastern.</li>
+      <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
+    </ol>
 
     <h2>Sales Receipt</h2>
     <div class="table-wrapper">
@@ -92,6 +103,10 @@
       </table>
     </div>
   </main>
+
+  <footer>
+    <p>Compiled by Ayaka Mikazuki. Contributions and additional samples are welcome. Feel free to contact <a id="contact-link"></a>. Source code is available on <a href="https://github.com/ayaka14732/uk-rail-tickets" target="_blank">GitHub</a>.</p>
+  </footer>
 
   <div id="lightbox" onclick="this.classList.remove('open')">
     <span id="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">&times;</span>
@@ -119,7 +134,7 @@
         { station: "London Marylebone", ticket: "tickets/0002.jpg", receipt: "tickets/0004.jpg", type: "5" }
       ]},
       { operator: "CrossCountry", rows: [
-        { station: "(Online via Post)", ticket: "tickets/0013.jpg", receipt: "No receipt provided", type: "1" }
+        { station: "(Online via post)", ticket: "tickets/0013.jpg", receipt: "No receipt provided", type: "1" }
       ]},
       { operator: "East Midlands Railway", rows: [
         { station: "Leicester", ticket: "tickets/0017.jpg", receipt: "tickets/0018.jpg", type: "3" }
@@ -134,7 +149,8 @@
         { station: "", ticket: "", receipt: "", type: "" }
       ]},
       { operator: "Great Northern", rows: [
-        { station: "Letchworth Garden City", ticket: "tickets/0015.jpg", receipt: "tickets/0016.jpg", type: "3" }
+        { station: "Letchworth Garden City", ticket: "tickets/0015.jpg", receipt: "tickets/0016.jpg", type: "3" },
+        { station: { text: "Hitchin", note: "Cannot recall whether this was collected from a TVM or the ticket office" }, ticket: "tickets/0061.jpg", receipt: "tickets/0062.jpg", type: "3b" }
       ]},
       { operator: "Great Western Railway", rows: [
         { station: "London Paddington", ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "6" },
@@ -171,7 +187,7 @@
       ]},
       { operator: "ScotRail", rows: [
         { station: "Glasgow Airport Express Bus", ticket: "tickets/0027.jpg", receipt: "tickets/0028.jpg", type: "3" },
-        { station: "Some station (Ticket Office)", ticket: "", receipt: "", type: "9" }
+        { station: "High Street (Glasgow) (Ticket Office)", ticket: "Lost", receipt: "No receipt provided", type: "9" }
       ]},
       { operator: "South Western Railway", rows: [
         { station: "Southampton Airport Parkway", ticket: "tickets/0029.jpg", receipt: "tickets/0030.jpg", type: "3b" }
@@ -186,7 +202,7 @@
       { operator: "Thameslink", rows: [
         { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "3" },
         { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" },
-        { station: "Bedford", ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "3b" }
+        { station: { text: "Bedford", note: "Cannot recall whether this was collected from a TVM or the ticket office" }, ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "3b" }
       ]},
       { operator: "TransPennine Express", rows: [
         { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
@@ -201,7 +217,7 @@
         { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "9" }
       ]},
       { operator: "Miscellaneous", rows: [
-        { station: { text: "London St Pancras International", note: "Very rare — not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" }
+        { station: { text: "London St Pancras International", note: "This ticket format is very unusual, and I am not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" }
       ]},
     ];
 
@@ -331,6 +347,12 @@
     }
 
     buildSalesReceiptTable(salesReceiptData);
+
+    const u = ['ayaka', 'mail.shn.hk'].join('@');
+    const a = document.getElementById('contact-link');
+    a.href = 'mailto:' + u;
+    a.textContent = u;
+    a.target = '_blank';
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
