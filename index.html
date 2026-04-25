@@ -65,7 +65,7 @@
   </header>
 
   <main>
-    <h2>Train Ticket</h2>
+    <h2>Ticket on Departure (ToD)</h2>
     <div class="toolbar">
       <button id="btn-sort">Sort by Type</button>
     </div>
@@ -87,6 +87,27 @@
       <li>The Train Tickets listed are all of the Ticket on Departure (ToD) type, meaning they were purchased online and collected at a Ticket Vending Machine (TVM). Other purchase methods (e.g. buying directly at the station) are not covered here.</li>
       <li>Operator refers to the operator labelled on the Ticket Vending Machine (TVM), which may differ from the station's managing operator. For example, London Victoria is managed by Network Rail, but its TVMs include those branded Southern and Southeastern.</li>
       <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
+    </ol>
+
+    <h2>Online via Post</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Sample Ticket</th>
+            <th>Sample Postage Label</th>
+            <th>Fee</th>
+            <th>Mail Class</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody id="online-via-post-table-body"></tbody>
+      </table>
+    </div>
+    <ol class="table-notes">
+      <li>Fee and Mail Class data is as of 24 April 2026, sourced from each operator's website. A friend of mine researched and compiled this information.</li>
+      <li>N/A indicates that the operator's website does not offer a postal ticket delivery service.</li>
     </ol>
 
     <h2>Sales Receipt</h2>
@@ -134,7 +155,7 @@
         { station: "London Marylebone", ticket: "tickets/0002.jpg", receipt: "tickets/0004.jpg", type: "5" }
       ]},
       { operator: "CrossCountry", rows: [
-        { station: { text: "", note: "Online via post" },  ticket: "tickets/0013.jpg", receipt: "No receipt provided", type: "1" }
+        { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
       ]},
       { operator: "East Midlands Railway", rows: [
         { station: "Leicester", ticket: "tickets/0017.jpg", receipt: "tickets/0018.jpg", type: "3" }
@@ -180,7 +201,7 @@
       ]},
       { operator: "Merseyrail", rows: [
         { station: "Liverpool Lime Street", ticket: "tickets/0010.jpg", receipt: "tickets/0011.jpg", type: "3" },
-        { station: "Liverpool South Parkway (Ticket Office)", ticket: { img: "tickets/0012.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" }
+        { station: "Liverpool South Parkway (Ticket Office)", ticket: "tickets/0009.jpg", receipt: "White Thermal Paper Receipt", type: "9" }
       ]},
       { operator: "Northern", rows: [
         { station: "Liverpool South Parkway", ticket: "tickets/0005.jpg", receipt: "tickets/0006.jpg", type: "5" }
@@ -201,8 +222,8 @@
       ]},
       { operator: "Thameslink", rows: [
         { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "3" },
-        { station: "Luton Airport Parkway", ticket: { img: "tickets/0009.jpg", note: "To be confirmed if it was collected from this station" }, receipt: "White Thermal Paper Receipt", type: "9" },
-        { station: "Bedford", ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "3b" }
+        { station: "Luton Airport Parkway", ticket: "tickets/0012.jpg", receipt: "White Thermal Paper Receipt", type: "9b" },
+        { station: "Luton Airport", ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "3b" }
       ]},
       { operator: "TransPennine Express", rows: [
         { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
@@ -214,7 +235,7 @@
         { station: "", ticket: "", receipt: "", type: "" }
       ]},
       { operator: "London Southend Airport", rows: [
-        { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "9" }
+        { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "9b" }
       ]},
       { operator: "Miscellaneous", rows: [
         { station: { text: "London St Pancras International", note: "This ticket format is very unusual, and I am not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "2" }
@@ -318,6 +339,54 @@
     };
 
     buildTable(tableData, true);
+
+    const onlineViaPostData = [
+      { operator: "Avanti West Coast", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
+      { operator: "c2c", ticket: "", postage: "", type: "", fee: "0", mailClass: "1st" },
+      { operator: "Caledonian Sleeper", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Chiltern Railways", ticket: "", postage: "", type: "", fee: "0", mailClass: "1st" },
+      { operator: "CrossCountry", ticket: "tickets/0013.jpg", postage: "tickets/0063.jpg", type: "1", fee: "1.2", mailClass: "2nd" },
+      { operator: "East Midlands Railway", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" },
+      { operator: "Elizabeth line", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Gatwick Express", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Grand Central", ticket: "", postage: "", type: "", fee: "1.5", mailClass: "1st" },
+      { operator: "Great Northern", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Great Western Railway", ticket: "", postage: "", type: "", fee: "2.1", mailClass: "1st" },
+      { operator: "Greater Anglia", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" },
+      { operator: "Heathrow Express", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Hull Trains", ticket: "tickets/0066.jpg", postage: "tickets/0067.jpg", type: "5b", fee: "2.1", mailClass: "1st" },
+      { operator: "LNER", ticket: "", postage: "", type: "", fee: "1.5", mailClass: "1st" },
+      { operator: "London Northwestern Railway", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "London Overground", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Lumo", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
+      { operator: "Merseyrail", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Northern", ticket: "", postage: "", type: "", fee: "1.2", mailClass: "2nd" },
+      { operator: "ScotRail", ticket: "To be added", postage: "To be added", type: "", fee: "1", mailClass: "2nd" },
+      { operator: "South Western Railway", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
+      { operator: "Southeastern", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
+      { operator: "Southern", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "Thameslink", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "TransPennine Express", ticket: "To be added", postage: "To be added", type: "", fee: "2.2", mailClass: "1st" },
+      { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "5b", fee: "", mailClass: "" },
+      { operator: "West Midlands Railway", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" }
+    ];
+
+    function buildOnlineViaPostTable(data) {
+      const tbody = document.getElementById('online-via-post-table-body');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.appendChild(renderCell(row.operator));
+        tr.appendChild(renderCell(row.ticket));
+        tr.appendChild(renderCell(row.postage));
+        tr.appendChild(renderCell(row.fee));
+        tr.appendChild(renderCell(row.mailClass));
+        tr.appendChild(renderCell(row.type));
+        tbody.appendChild(tr);
+      });
+    }
+
+    buildOnlineViaPostTable(onlineViaPostData);
 
     const salesReceiptData = [
       { operator: "Avanti West Coast", station: "London Euston", receipt: "White Thermal Paper Receipt" },
