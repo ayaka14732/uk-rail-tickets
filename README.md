@@ -1,3 +1,5 @@
-# UK Rail Tickets
+# UK Railway Ticket Collection
 
-A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.
+Unlike many countries where rail tickets follow a single national standard, the UK railway system is a patchwork of operators, each issuing tickets in their own format. This variety makes collecting UK railway tickets an interesting hobby. Every ticket is a small artefact of a particular operator, route, and era.
+
+This project documents a collection of physical ticket samples and collection receipts gathered from stations and journeys across the UK, covering a range of train operating companies (TOCs) and ticket types.
