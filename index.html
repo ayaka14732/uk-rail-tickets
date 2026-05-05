@@ -65,7 +65,16 @@
   </header>
 
   <main>
-    <h2>Ticket on Departure (ToD)</h2>
+    <nav>
+      <ol>
+        <li><a href="#tod">Ticket on Departure (ToD)</a></li>
+        <li><a href="#online-via-post">Online via Post</a></li>
+        <li><a href="#sales-receipt">Sales Receipt</a></li>
+        <li><a href="#platform-ticket">Platform Ticket</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="tod">Ticket on Departure (ToD)</h2>
     <div class="toolbar">
       <button id="btn-sort">Sort by Type</button>
     </div>
@@ -89,7 +98,7 @@
       <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
     </ol>
 
-    <h2>Online via Post</h2>
+    <h2 id="online-via-post">Online via Post</h2>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -110,7 +119,7 @@
       <li>N/A indicates that the operator's website does not offer a postal ticket delivery service.</li>
     </ol>
 
-    <h2>Sales Receipt</h2>
+    <h2 id="sales-receipt">Sales Receipt</h2>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -121,6 +130,20 @@
           </tr>
         </thead>
         <tbody id="sales-receipt-table-body"></tbody>
+      </table>
+    </div>
+
+    <h2 id="platform-ticket">Platform Ticket</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Operator</th>
+            <th>Sample Station</th>
+            <th>Sample Ticket</th>
+          </tr>
+        </thead>
+        <tbody id="platform-ticket-table-body"></tbody>
       </table>
     </div>
   </main>
@@ -341,32 +364,32 @@
 
     const onlineViaPostData = [
       { operator: "Avanti West Coast", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "c2c", ticket: "TBA", postage: "TBA", type: "", fee: "0", mailClass: "1st" },
+      { operator: "c2c", ticket: "TBA", postage: "", type: "", fee: "0", mailClass: "1st" },
       { operator: "Caledonian Sleeper", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "Chiltern Railways", ticket: "", postage: "", type: "", fee: "0", mailClass: "1st" },
+      { operator: "Chiltern Railways", ticket: "tickets/0066.jpg", postage: "tickets/0067.jpg", type: "10", fee: "0", mailClass: "1st" },
       { operator: "CrossCountry", ticket: "tickets/0013.jpg", postage: "tickets/0063.jpg", type: "9", fee: "1.2", mailClass: "2nd" },
-      { operator: "East Midlands Railway", ticket: "TBA", postage: "TBA", type: "", fee: "1", mailClass: "2nd" },
-      { operator: "Elizabeth line", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "Gatwick Express", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
-      { operator: "Grand Central", ticket: "", postage: "", type: "", fee: "1.5", mailClass: "1st" },
+      { operator: "East Midlands Railway", ticket: "tickets/0072.jpg", postage: "tickets/0073.jpg", type: "9", fee: "1", mailClass: "2nd" },
+      { operator: "Elizabeth line", ticket: "N/A", postage: "N/A", type: "", fee: "", mailClass: "" },
+      { operator: "Gatwick Express", ticket: "TBA", postage: "", type: "", fee: "2.2", mailClass: "1st" },
+      { operator: "Grand Central", ticket: "TBA", postage: "", type: "", fee: "1.5", mailClass: "1st" },
       { operator: "Great Northern", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
       { operator: "Great Western Railway", ticket: "", postage: "", type: "", fee: "2.1", mailClass: "1st" },
       { operator: "Greater Anglia", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" },
       { operator: "Heathrow Express", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
       { operator: "Hull Trains", ticket: "tickets/0042.jpg", postage: "tickets/0043.jpg", type: "10", fee: "2.1", mailClass: "1st" },
-      { operator: "LNER", ticket: "", postage: "", type: "", fee: "1.5", mailClass: "1st" },
+      { operator: "LNER", ticket: "TBA", postage: "", type: "", fee: "1.5", mailClass: "1st" },
       { operator: "London Northwestern Railway", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "London Overground", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
+      { operator: "London Overground", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
       { operator: "Lumo", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
       { operator: "Merseyrail", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
       { operator: "Northern", ticket: "", postage: "", type: "", fee: "1.2", mailClass: "2nd" },
-      { operator: "ScotRail", ticket: "TBA", postage: "TBA", type: "", fee: "1", mailClass: "2nd" },
+      { operator: "ScotRail", ticket: "tickets/0070.jpg", postage: "tickets/0071.jpg", type: "9", fee: "1", mailClass: "2nd" },
       { operator: "South Western Railway", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
       { operator: "Southeastern", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
       { operator: "Southern", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
       { operator: "Thameslink", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "TransPennine Express", ticket: "TBA", postage: "TBA", type: "", fee: "2.2", mailClass: "1st" },
-      { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "10", fee: "", mailClass: "" },
+      { operator: "TransPennine Express", ticket: "tickets/0068.jpg", postage: "tickets/0069.jpg", type: "10b", fee: "2.2", mailClass: "1st" },
+      { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "10", fee: "0.95", mailClass: "1st" },
       { operator: "West Midlands Railway", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" }
     ];
 
@@ -393,8 +416,9 @@
       { operator: "East Midlands Railway", station: "London St Pancras International", receipt: "tickets/0060.jpg" },
       { operator: "Elizabeth line", station: "London Paddington", receipt: "White Thermal Paper Receipt" },
       { operator: "Great Northern", station: "London Kings Cross", receipt: "tickets/0058.jpg" },
-      { operator: "Greater Anglia", station: "Tottenham Hale", receipt: "tickets/0057.jpg" },
-      { operator: "London Northwestern Railway", station: "London Euston", receipt: "tickets/0053.jpg" },
+      { operator: "Greater Anglia", station: "Tottenham Hale", receipt: "White Paper Receipt with Orange Bands" },
+      { operator: "Greater Anglia", station: "Cheshunt", receipt: "tickets/0057.jpg" },
+      { operator: "London Northwestern Railway", station: "London Euston", receipt: "White Paper Receipt with Orange Bands" },
       { operator: "ScotRail", station: "Charing Cross (Glasgow)", receipt: "tickets/0052.jpg" },
       { operator: "Southeastern", station: "London Victoria", receipt: "tickets/0049.jpg" },
       { operator: "Southern", station: "London Victoria", receipt: "tickets/0048.jpg" },
@@ -405,9 +429,16 @@
     function buildSalesReceiptTable(data) {
       const tbody = document.getElementById('sales-receipt-table-body');
       tbody.innerHTML = '';
-      data.forEach(row => {
+      data.forEach((row, i) => {
         const tr = document.createElement('tr');
-        tr.appendChild(renderCell(row.operator));
+        const sameAsPrev = i > 0 && data[i - 1].operator === row.operator;
+        if (!sameAsPrev) {
+          let span = 0;
+          for (let j = i; j < data.length && data[j].operator === row.operator; j++) span++;
+          const td = renderCell(row.operator);
+          if (span > 1) td.rowSpan = span;
+          tr.appendChild(td);
+        }
         tr.appendChild(renderCell(row.station));
         tr.appendChild(renderCell(row.receipt));
         tbody.appendChild(tr);
@@ -415,6 +446,31 @@
     }
 
     buildSalesReceiptTable(salesReceiptData);
+
+    const platformTicketData = [
+      { operator: "Greater Anglia", station: "Bishop's Stortford", ticket: "tickets/0053.jpg" }
+    ];
+
+    function buildPlatformTicketTable(data) {
+      const tbody = document.getElementById('platform-ticket-table-body');
+      tbody.innerHTML = '';
+      data.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        const sameAsPrev = i > 0 && data[i - 1].operator === row.operator;
+        if (!sameAsPrev) {
+          let span = 0;
+          for (let j = i; j < data.length && data[j].operator === row.operator; j++) span++;
+          const td = renderCell(row.operator);
+          if (span > 1) td.rowSpan = span;
+          tr.appendChild(td);
+        }
+        tr.appendChild(renderCell(row.station));
+        tr.appendChild(renderCell(row.ticket));
+        tbody.appendChild(tr);
+      });
+    }
+
+    buildPlatformTicketTable(platformTicketData);
 
     const u = ['ayaka', 'mail.shn.hk'].join('@');
     const a = document.getElementById('contact-link');
