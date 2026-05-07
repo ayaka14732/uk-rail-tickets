@@ -181,6 +181,7 @@
         { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
       ]},
       { operator: "East Midlands Railway", rows: [
+        { station: { text: "London St Pancras International", note: "unusual format" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "1" },
         { station: "Leicester", ticket: "tickets/0017.jpg", receipt: "tickets/0018.jpg", type: "2" }
       ]},
       { operator: "Elizabeth line", rows: [
@@ -197,7 +198,7 @@
         { station: "Hitchin", ticket: "tickets/0061.jpg", receipt: "tickets/0062.jpg", type: "2b" }
       ]},
       { operator: "Great Western Railway", rows: [
-        { station: "London Paddington", ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "5" },
+        // { station: "London Paddington", ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "5" },
         { station: "London Paddington", ticket: "tickets/0046.jpg", receipt: "tickets/0047.jpg", type: "2" }
       ]},
       { operator: "Greater Anglia", rows: [
@@ -258,10 +259,7 @@
       ]},
       { operator: "London Southend Airport", rows: [
         { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "8b" }
-      ]},
-      { operator: "Miscellaneous", rows: [
-        { station: { text: "London St Pancras International", note: "This ticket format is very unusual, and I am not sure how I got it" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "1" }
-      ]},
+      ]}
     ];
 
     function renderCell(value) {
@@ -390,7 +388,7 @@
       { operator: "Thameslink", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
       { operator: "TransPennine Express", ticket: "tickets/0068.jpg", postage: "tickets/0069.jpg", type: "10b", fee: "2.2", mailClass: "1st" },
       { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "10", fee: "0.95", mailClass: "1st" },
-      { operator: "West Midlands Railway", ticket: "", postage: "", type: "", fee: "1", mailClass: "2nd" }
+      { operator: "West Midlands Railway", ticket: "tickets/0074.jpg", postage: "tickets/0075.jpg", type: "9", fee: "1", mailClass: "2nd" }
     ];
 
     function buildOnlineViaPostTable(data) {
