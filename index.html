@@ -10,6 +10,7 @@
     body {
       font-family: 'Arial', system-ui, sans-serif;
       margin: 0;
+      line-height: 1.4;
     }
 
     header {
@@ -35,6 +36,15 @@
     th, td { padding: 12px 16px; vertical-align: middle; border: 1px solid #ccc; text-align: left; }
 
     .note { display: block; margin-top: 4px; font-size: 13px; color: #666; }
+
+    .operator-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
 
     table img { height: 200px; cursor: zoom-in; display: block; }
 
@@ -74,10 +84,10 @@
       </ol>
     </nav>
 
-    <h2 id="tod">Ticket on Departure (ToD)</h2>
     <div class="toolbar">
       <button id="btn-sort">Sort by Type</button>
     </div>
+    <h2 id="tod">Ticket on Departure (ToD)</h2>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -96,12 +106,11 @@
       <li>The Train Tickets listed are all of the Ticket on Departure (ToD) type, meaning they were purchased online and collected at a Ticket Vending Machine (TVM). Other purchase methods (e.g. buying directly at the station) are not covered here.</li>
       <li>Operator refers to the operator labelled on the Ticket Vending Machine (TVM), which may differ from the station's managing operator. For example, London Victoria is managed by Network Rail, but its TVMs include those branded Southern and Southeastern.</li>
       <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
+      <li>Type 6 and type 9 use a similar font style, but the digits <em>3</em>, <em>6</em> and <em>9</em> are written differently.</li>
+      <li>Type 8 is a reserved number, and no sample is currently available.</li>
     </ol>
 
     <h2 id="online-via-post">Online via Post</h2>
-    <div class="toolbar">
-      <button id="btn-sort-ovp">Sort by Type</button>
-    </div>
     <div class="table-wrapper">
       <table>
         <thead>
@@ -109,8 +118,6 @@
             <th>Operator</th>
             <th>Sample Ticket</th>
             <th>Sample Postage Label</th>
-            <th>Fee</th>
-            <th>Mail Class</th>
             <th>Type</th>
           </tr>
         </thead>
@@ -118,7 +125,6 @@
       </table>
     </div>
     <ol class="table-notes">
-      <li>Fee and Mail Class data is as of 24 April 2026, sourced from each operator's website. A friend of mine researched and compiled this information.</li>
       <li>N/A indicates that the operator's website does not offer a postal ticket delivery service.</li>
     </ol>
 
@@ -162,6 +168,77 @@
   </div>
 
   <script>
+    // Selected from https://en.wikipedia.org/wiki/Wikipedia:WikiProject_UK_Railways/Colours_list
+    const OPERATOR_COLORS = {
+      "Avanti West Coast": "004354",
+      "c2c": "b7007c",
+      "Caledonian Sleeper": "1d2e35",
+      "Chiltern Railways": "00bfff",
+      "CrossCountry": "660f21",
+      "East Midlands Railway": "713563",
+      "Elizabeth Line": "6950a1",
+      "Gatwick Express": "eb1e2d",
+      "Grand Central": "1d1d1b",
+      "Great Northern": "6c2d7e",
+      "Great Western Railway": "0a493e",
+      "Greater Anglia": "d70428",
+      "Heathrow Express": "532e63",
+      "Hull Trains": "de005c",
+      "Island Line": "1e90ff",
+      "LNER": "ce0e2d",
+      "London Northwestern Railway": "00bf6f",
+      "London Overground": "e87722",
+      "Lumo": "2b6ef5",
+      "Merseyrail": "fff200",
+      "Northern": "0f0d78",
+      "ScotRail": "1e467d",
+      "South Western Railway": "24398c",
+      "Southeastern": "389cff",
+      "Southern": "8cc63e",
+      "Stansted Express": "6b717a",
+      "Thameslink": "ff5aa4",
+      "TransPennine Express": "09a4ec",
+      "Transport for Wales": "ff0000",
+      "West Midlands Trains": "ff8300",
+    };
+
+    const OPERATOR_ALIASES = {
+      "Transpennine Express": "TransPennine Express",
+      "West Midlands Railway": "West Midlands Trains",
+    };
+
+    function normaliseOperator(name) {
+      return OPERATOR_ALIASES[name] || name;
+    }
+
+    function operatorFg(hex) {
+      const r = parseInt(hex.slice(0, 2), 16) / 255;
+      const g = parseInt(hex.slice(2, 4), 16) / 255;
+      const b = parseInt(hex.slice(4, 6), 16) / 255;
+      const lin = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+      const lum = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+      return lum > 0.179 ? '#000000' : '#ffffff';
+    }
+
+    function renderOperatorCell(name) {
+      const td = document.createElement('td');
+      const canonical = normaliseOperator(name);
+      const hex = OPERATOR_COLORS[canonical];
+
+      if (!hex) {
+        td.textContent = name;
+        return td;
+      }
+
+      const badge = document.createElement('span');
+      badge.className = 'operator-badge';
+      badge.style.backgroundColor = `#${hex}`;
+      badge.style.color = operatorFg(hex);
+      badge.textContent = name;
+      td.appendChild(badge);
+      return td;
+    }
+
     // Cell value formats:
     //   ""               — empty cell
     //   "tickets/0007.jpg" — image (detected by extension)
@@ -188,11 +265,11 @@
         { station: { text: "London St Pancras International", note: "unusual format" }, ticket: "tickets/0039.jpg", receipt: "tickets/0040.jpg", type: "1" },
         { station: "Leicester", ticket: "tickets/0017.jpg", receipt: "tickets/0018.jpg", type: "2" }
       ]},
-      { operator: "Elizabeth line", rows: [
-        { station: "Canary Wharf", ticket: "tickets/0035.jpg", receipt: "tickets/0036.jpg", type: "6" }
+      { operator: "Elizabeth Line", rows: [
+        { station: "Canary Wharf", ticket: "tickets/0035.jpg", receipt: "tickets/0036.jpg", type: "7" }
       ]},
       { operator: "Gatwick Express", rows: [
-        { station: "", ticket: "", receipt: "", type: "" }
+        { station: "Gatwick Airport", ticket: "", receipt: "", type: "" }
       ]},
       { operator: "Grand Central", rows: [
         { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
@@ -208,7 +285,7 @@
         { station: "London Liverpool Street", ticket: "tickets/0014.jpg", receipt: "No receipt provided", type: "2" }
       ]},
       { operator: "Heathrow Express", rows: [
-        { station: "Heathrow Terminals 2 & 3", ticket: "tickets/0033.jpg", receipt: "tickets/0034.jpg", type: "6" },
+        { station: "Heathrow Terminals 2 & 3", ticket: "tickets/0033.jpg", receipt: "tickets/0034.jpg", type: "7" },
         { station: { text: "London Paddington", note: "NLC 5976 suggests Heathrow Express, but cannot confirm from memory" }, ticket: "tickets/0037.jpg", receipt: "tickets/0038.jpg", type: "5" }
       ]},
       { operator: "Hull Trains", rows: [
@@ -222,39 +299,41 @@
         { station: "Milton Keynes Central", ticket: "tickets/0019.jpg", receipt: "tickets/0020.jpg", type: "2" }
       ]},
       { operator: "London Overground", rows: [
-        { station: "Rotherhithe", ticket: "tickets/0001.jpg", receipt: "tickets/0003.jpg", type: "7" }
+        { station: "Rotherhithe", ticket: "tickets/0001.jpg", receipt: "tickets/0003.jpg", type: "9c" }
       ]},
       { operator: "Lumo", rows: [
         { station: "N/A", ticket: "N/A", receipt: "N/A", type: "" }
       ]},
       { operator: "Merseyrail", rows: [
         { station: "Liverpool Lime Street", ticket: "tickets/0010.jpg", receipt: "tickets/0011.jpg", type: "2" },
-        { station: "Liverpool South Parkway (Ticket Office)", ticket: "tickets/0009.jpg", receipt: "White Thermal Paper Receipt", type: "8" }
+        { station: "Liverpool South Parkway (Ticket Office)", ticket: "tickets/0009.jpg", receipt: "White Thermal Paper Receipt", type: "9" }
       ]},
       { operator: "Northern", rows: [
         { station: "Liverpool South Parkway", ticket: "tickets/0005.jpg", receipt: "tickets/0006.jpg", type: "4" }
       ]},
       { operator: "ScotRail", rows: [
         { station: "Glasgow Airport Xbus", ticket: "tickets/0027.jpg", receipt: "tickets/0028.jpg", type: "2" }, // See also https://busandtrainuser.com/2024/01/30/seen-around-glasgow/
-        { station: "High Street (Glasgow) (Ticket Office)", ticket: "Lost", receipt: "No receipt provided", type: "8" }
+        { station: "High Street (Glasgow) (Ticket Office)", ticket: "Lost", receipt: "No receipt provided", type: "9" },
+        { station: { text: "Partick", note: "Seen online, but needs to be confirmed" }, ticket: "", receipt: "", type: "1" }
       ]},
       { operator: "South Western Railway", rows: [
-        { station: "Southampton Airport Parkway", ticket: "tickets/0029.jpg", receipt: "tickets/0030.jpg", type: "2b" }
+        { station: "Southampton Airport Parkway", ticket: "tickets/0029.jpg", receipt: "tickets/0030.jpg", type: "2b" },
+        { station: "Surbiton (Ticket Office)", ticket: "tickets/0089.jpg", receipt: "tickets/0090.jpg", type: "6" }
       ]},
       { operator: "Southeastern", rows: [
         { station: "London Charing Cross", ticket: "tickets/0023.jpg", receipt: "tickets/0024.jpg", type: "2" }
       ]},
       { operator: "Southern", rows: [
         { station: "Shoreham-by-Sea", ticket: "Missing", receipt: "tickets/0086.jpg", type: "2" },
-        { station: "Shoreham-by-Sea (Ticket Office)", ticket: { img: "tickets/0084.jpg", note: "The digits '6' and '9' are written differently from type 8." }, receipt: "tickets/0085.jpg", type: "8b" }
+        { station: "Shoreham-by-Sea (Ticket Office)", ticket: "tickets/0084.jpg", receipt: "tickets/0085.jpg", type: "6" }
       ]},
       { operator: "Thameslink", rows: [
         { station: "Luton Airport Parkway", ticket: "tickets/0025.jpg", receipt: "tickets/0026.jpg", type: "2" },
-        { station: "Luton Airport Parkway", ticket: "tickets/0012.jpg", receipt: "White Thermal Paper Receipt", type: "8c" },
+        { station: "Luton Airport Parkway", ticket: "tickets/0012.jpg", receipt: "White Thermal Paper Receipt", type: "9b" },
         { station: "Luton Airport", ticket: "tickets/0050.jpg", receipt: "tickets/0051.jpg", type: "2b" }
       ]},
       { operator: "TransPennine Express", rows: [
-        { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "8" }
+        { station: "Manchester Airport", ticket: "tickets/0041.jpg", receipt: "No receipt (or missing?)", type: "9" }
       ]},
       { operator: "Transport for Wales", rows: [
         { station: "", ticket: "", receipt: "", type: "" }
@@ -263,7 +342,7 @@
         { station: "", ticket: "", receipt: "", type: "" }
       ]},
       { operator: "London Southend Airport", rows: [
-        { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "8c" }
+        { station: "Southend Airport", ticket: "tickets/0044.jpg", receipt: "tickets/0045.jpg", type: "9b" }
       ]}
     ];
 
@@ -315,8 +394,7 @@
           rows.forEach((row, i) => {
             const tr = document.createElement('tr');
             if (i === 0) {
-              const td = document.createElement('td');
-              td.textContent = operator;
+              const td = renderOperatorCell(operator);
               if (rows.length > 1) td.rowSpan = rows.length;
               tr.appendChild(td);
             }
@@ -330,8 +408,7 @@
       } else {
         data.forEach(({ operator, row }) => {
           const tr = document.createElement('tr');
-          const td = document.createElement('td');
-          td.textContent = operator;
+          const td = renderOperatorCell(operator);
           tr.appendChild(td);
           tr.appendChild(renderCell(row.station));
           tr.appendChild(renderCell(row.ticket));
@@ -343,57 +420,37 @@
 
     }
 
-    let sorted = false;
-    const btnSort = document.getElementById('btn-sort');
-
-    btnSort.onclick = () => {
-      sorted = !sorted;
-      btnSort.textContent = sorted ? 'Restore Default Order' : 'Sort by Type';
-
-      if (!sorted) {
-        buildTable(tableData, true);
-      } else {
-        const flat = tableData.flatMap(({ operator, rows }) => rows.map(row => ({ operator, row })));
-        flat.sort((a, b) => {
-          const ta = a.row.type || '\uffff';
-          const tb = b.row.type || '\uffff';
-          return ta.localeCompare(tb, undefined, { numeric: true });
-        });
-        buildTable(flat, false);
-      }
-    };
-
     buildTable(tableData, true);
 
     const onlineViaPostData = [
-      { operator: "Avanti West Coast", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "c2c", ticket: "tickets/0082.jpg", postage: "tickets/0083.jpg", type: "10c", fee: "0", mailClass: "1st" },
-      { operator: "Caledonian Sleeper", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "Chiltern Railways", ticket: "tickets/0066.jpg", postage: "tickets/0067.jpg", type: "10", fee: "0", mailClass: "1st" },
-      { operator: "CrossCountry", ticket: "tickets/0013.jpg", postage: "tickets/0063.jpg", type: "9", fee: "1.2", mailClass: "2nd" },
-      { operator: "East Midlands Railway", ticket: "tickets/0072.jpg", postage: "tickets/0073.jpg", type: "9", fee: "1", mailClass: "2nd" },
-      { operator: "Elizabeth line", ticket: "N/A", postage: "N/A", type: "", fee: "", mailClass: "" },
-      { operator: "Gatwick Express", ticket: "tickets/0080.jpg", postage: "tickets/0081.jpg", type: "10b", fee: "2.2", mailClass: "1st" },
-      { operator: "Grand Central", ticket: "tickets/0078.jpg", postage: "tickets/0079.jpg", type: "10", fee: "1.5", mailClass: "1st" },
-      { operator: "Great Northern", ticket: "Presumed identical to Gatwick Express", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "Great Western Railway", ticket: "tickets/0087.jpg", postage: "tickets/0088.jpg", type: "10", fee: "2.1", mailClass: "1st" },
-      { operator: "Greater Anglia", ticket: "TBA", postage: "", type: "", fee: "1", mailClass: "2nd" },
-      { operator: "Heathrow Express", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "Hull Trains", ticket: "tickets/0042.jpg", postage: "tickets/0043.jpg", type: "10", fee: "2.1", mailClass: "1st" },
-      { operator: "LNER", ticket: "tickets/0076.jpg", postage: "tickets/0077.jpg", type: "11", fee: "1.5", mailClass: "1st" },
-      { operator: "London Northwestern Railway", ticket: "", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "London Overground", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "Lumo", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "Merseyrail", ticket: "N/A", postage: "N/A", type: "", fee: "N/A", mailClass: "N/A" },
-      { operator: "Northern", ticket: "", postage: "", type: "", fee: "1.2", mailClass: "2nd" },
-      { operator: "ScotRail", ticket: "tickets/0070.jpg", postage: "tickets/0071.jpg", type: "9", fee: "1", mailClass: "2nd" },
-      { operator: "South Western Railway", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
-      { operator: "Southeastern", ticket: "", postage: "", type: "", fee: "2.2", mailClass: "1st" },
-      { operator: "Southern", ticket: "Presumed identical to Gatwick Express", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "Thameslink", ticket: "Presumed identical to Gatwick Express", postage: "", type: "", fee: "", mailClass: "" },
-      { operator: "TransPennine Express", ticket: "tickets/0068.jpg", postage: "tickets/0069.jpg", type: "10b", fee: "2.2", mailClass: "1st" },
-      { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "10", fee: "0.95", mailClass: "1st" },
-      { operator: "West Midlands Railway", ticket: "tickets/0074.jpg", postage: "tickets/0075.jpg", type: "9", fee: "1", mailClass: "2nd" }
+      { operator: "Avanti West Coast", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "c2c", ticket: "tickets/0082.jpg", postage: "tickets/0083.jpg", type: "12c" },
+      { operator: "Caledonian Sleeper", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Chiltern Railways", ticket: "tickets/0066.jpg", postage: "tickets/0067.jpg", type: "12" },
+      { operator: "CrossCountry", ticket: "tickets/0013.jpg", postage: "tickets/0063.jpg", type: "11" },
+      { operator: "East Midlands Railway", ticket: "tickets/0072.jpg", postage: "tickets/0073.jpg", type: "11" },
+      { operator: "Elizabeth Line", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Gatwick Express", ticket: "tickets/0080.jpg", postage: "tickets/0081.jpg", type: "12b" },
+      { operator: "Grand Central", ticket: "tickets/0078.jpg", postage: "tickets/0079.jpg", type: "12" },
+      { operator: "Great Northern", ticket: "Presumed identical to Gatwick Express", postage: "", type: "" },
+      { operator: "Great Western Railway", ticket: "tickets/0087.jpg", postage: "tickets/0088.jpg", type: "12" },
+      { operator: "Greater Anglia", ticket: "TBA", postage: "", type: "" },
+      { operator: "Heathrow Express", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Hull Trains", ticket: "tickets/0042.jpg", postage: "tickets/0043.jpg", type: "12" },
+      { operator: "LNER", ticket: "tickets/0076.jpg", postage: "tickets/0077.jpg", type: "10" },
+      { operator: "London Northwestern Railway", ticket: "", postage: "", type: "" },
+      { operator: "London Overground", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Lumo", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Merseyrail", ticket: "N/A", postage: "N/A", type: "" },
+      { operator: "Northern", ticket: "", postage: "", type: "" },
+      { operator: "ScotRail", ticket: "tickets/0070.jpg", postage: "tickets/0071.jpg", type: "11" },
+      { operator: "South Western Railway", ticket: "", postage: "", type: "" },
+      { operator: "Southeastern", ticket: "", postage: "", type: "" },
+      { operator: "Southern", ticket: "Presumed identical to Gatwick Express", postage: "", type: "" },
+      { operator: "Thameslink", ticket: "Presumed identical to Gatwick Express", postage: "", type: "" },
+      { operator: "TransPennine Express", ticket: "tickets/0068.jpg", postage: "tickets/0069.jpg", type: "12b" },
+      { operator: "Transport for Wales", ticket: "tickets/0064.jpg", postage: "tickets/0065.jpg", type: "12" },
+      { operator: "West Midlands Railway", ticket: "tickets/0074.jpg", postage: "tickets/0075.jpg", type: "11" }
     ];
 
     function buildOnlineViaPostTable(data) {
@@ -401,11 +458,9 @@
       tbody.innerHTML = '';
       data.forEach(row => {
         const tr = document.createElement('tr');
-        tr.appendChild(renderCell(row.operator));
+        tr.appendChild(renderOperatorCell(row.operator));
         tr.appendChild(renderCell(row.ticket));
         tr.appendChild(renderCell(row.postage));
-        tr.appendChild(renderCell(row.fee));
-        tr.appendChild(renderCell(row.mailClass));
         tr.appendChild(renderCell(row.type));
         tbody.appendChild(tr);
       });
@@ -413,20 +468,30 @@
 
     buildOnlineViaPostTable(onlineViaPostData);
 
-    let ovpSorted = false;
-    const btnSortOvp = document.getElementById('btn-sort-ovp');
-    btnSortOvp.onclick = () => {
-      ovpSorted = !ovpSorted;
-      btnSortOvp.textContent = ovpSorted ? 'Restore Default Order' : 'Sort by Type';
-      if (!ovpSorted) {
+    let sorted = false;
+    const btnSort = document.getElementById('btn-sort');
+    btnSort.onclick = () => {
+      sorted = !sorted;
+      btnSort.textContent = sorted ? 'Sort by Operator' : 'Sort by Type';
+
+      if (!sorted) {
+        buildTable(tableData, true);
         buildOnlineViaPostTable(onlineViaPostData);
       } else {
-        const sorted = [...onlineViaPostData].sort((a, b) => {
+        const flatTod = tableData.flatMap(({ operator, rows }) => rows.map(row => ({ operator, row })));
+        flatTod.sort((a, b) => {
+          const ta = a.row.type || '\uffff';
+          const tb = b.row.type || '\uffff';
+          return ta.localeCompare(tb, undefined, { numeric: true });
+        });
+        buildTable(flatTod, false);
+
+        const sortedOnlineViaPost = [...onlineViaPostData].sort((a, b) => {
           const ta = a.type || '￿';
           const tb = b.type || '￿';
           return ta.localeCompare(tb, undefined, { numeric: true });
         });
-        buildOnlineViaPostTable(sorted);
+        buildOnlineViaPostTable(sortedOnlineViaPost);
       }
     };
 
@@ -434,7 +499,7 @@
       { operator: "Avanti West Coast", station: "London Euston", receipt: "White Thermal Paper Receipt" },
       { operator: "CrossCountry", station: "N/A", receipt: "N/A" },
       { operator: "East Midlands Railway", station: "London St Pancras International", receipt: "tickets/0060.jpg" },
-      { operator: "Elizabeth line", station: "London Paddington", receipt: "White Thermal Paper Receipt" },
+      { operator: "Elizabeth Line", station: "London Paddington", receipt: "White Thermal Paper Receipt" },
       { operator: "Great Northern", station: "London Kings Cross", receipt: "tickets/0058.jpg" },
       { operator: "Greater Anglia", station: "Tottenham Hale", receipt: "White Paper Receipt with Orange Bands" },
       { operator: "Greater Anglia", station: "Cheshunt", receipt: "tickets/0057.jpg" },
@@ -455,7 +520,7 @@
         if (!sameAsPrev) {
           let span = 0;
           for (let j = i; j < data.length && data[j].operator === row.operator; j++) span++;
-          const td = renderCell(row.operator);
+          const td = renderOperatorCell(row.operator);
           if (span > 1) td.rowSpan = span;
           tr.appendChild(td);
         }
@@ -480,7 +545,7 @@
         if (!sameAsPrev) {
           let span = 0;
           for (let j = i; j < data.length && data[j].operator === row.operator; j++) span++;
-          const td = renderCell(row.operator);
+          const td = renderOperatorCell(row.operator);
           if (span > 1) td.rowSpan = span;
           tr.appendChild(td);
         }
