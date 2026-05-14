@@ -14,18 +14,19 @@
     }
 
     header {
-      padding: 18px 20px;
+      padding-top: 30px;
+      padding-bottom: 10px;
       text-align: center;
     }
 
-    header h1 { margin: 14px 0; }
-    header p { color: #555; margin: 0; }
+    header h1 { margin: 0; }
 
     main {
       max-width: 1300px;
-      margin: 18px auto;
+      margin: 0 auto;
       padding: 0 16px 48px;
       overflow-x: auto;
+      counter-reset: section;
     }
 
     table {
@@ -55,12 +56,13 @@
 
     main h2 { margin: 32px 0 16px; }
     main h2:first-child { margin-top: 0; }
+    main h2::before { counter-increment: section; content: counter(section) ". "; }
 
-    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; align-items: center; }
     .toolbar button { padding: 6px 14px; border: 1px solid #ccc; border-radius: 4px; background: #fff; cursor: pointer; font-size: 14px; }
     .toolbar button:hover { background: #f0f0f0; }
 
-    .table-notes { margin: 12px 0 0; padding-left: 20px; font-size: 14px; color: #555; line-height: 1.6; }
+    .table-notes { margin: 12px 0 0; padding-left: 20px; }
     .table-notes li { margin-bottom: 4px; }
 
     footer { padding: 24px 20px; text-align: center; font-size: 14px; color: #777; border-top: 1px solid #e0e0e0; }
@@ -71,12 +73,13 @@
 
   <header>
     <h1>UK Railway Ticket Collection (2024-2026)</h1>
-    <p>A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.</p>
   </header>
 
   <main>
     <nav>
       <ol>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#notes">Notes</a></li>
         <li><a href="#tod">Ticket on Departure (ToD)</a></li>
         <li><a href="#online-via-post">Online via Post</a></li>
         <li><a href="#sales-receipt">Sales Receipt</a></li>
@@ -84,7 +87,21 @@
       </ol>
     </nav>
 
+    <h2 id="introduction">Introduction</h2>
+    <p>A collection of physical ticket samples and collection receipts from UK train operators, gathered across various stations.</p>
+
+    <h2 id="notes">Notes</h2>
+    <ol class="table-notes">
+      <li>The Train Tickets listed in the ToD section are all of the Ticket on Departure (ToD) type, meaning they were purchased online and collected at a Ticket Vending Machine (TVM). Other purchase methods (e.g. buying directly at the station) are not covered here.</li>
+      <li>Operator refers to the operator labelled on the Ticket Vending Machine (TVM), which may differ from the station's managing operator. For example, London Victoria is managed by Network Rail, but its TVMs include those branded Southern and Southeastern.</li>
+      <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
+      <li>Type 6 and type 9 use a similar font style, but the digits <em>3</em>, <em>6</em> and <em>9</em> are written differently.</li>
+      <li>Type 8 is a reserved number, and no sample is currently available.</li>
+      <li>In the Online via Post section, N/A indicates that the operator's website does not offer a postal ticket delivery service.</li>
+    </ol>
+
     <div class="toolbar">
+      <span>Click this button to change the sorting order:</span>
       <button id="btn-sort">Sort by Type</button>
     </div>
     <h2 id="tod">Ticket on Departure (ToD)</h2>
@@ -102,13 +119,6 @@
         <tbody id="table-body"></tbody>
       </table>
     </div>
-    <ol class="table-notes">
-      <li>The Train Tickets listed are all of the Ticket on Departure (ToD) type, meaning they were purchased online and collected at a Ticket Vending Machine (TVM). Other purchase methods (e.g. buying directly at the station) are not covered here.</li>
-      <li>Operator refers to the operator labelled on the Ticket Vending Machine (TVM), which may differ from the station's managing operator. For example, London Victoria is managed by Network Rail, but its TVMs include those branded Southern and Southeastern.</li>
-      <li>Entries marked <em>Ticket Office</em> indicate the ticket was collected from a staffed ticket office window, not a TVM.</li>
-      <li>Type 6 and type 9 use a similar font style, but the digits <em>3</em>, <em>6</em> and <em>9</em> are written differently.</li>
-      <li>Type 8 is a reserved number, and no sample is currently available.</li>
-    </ol>
 
     <h2 id="online-via-post">Online via Post</h2>
     <div class="table-wrapper">
@@ -124,9 +134,6 @@
         <tbody id="online-via-post-table-body"></tbody>
       </table>
     </div>
-    <ol class="table-notes">
-      <li>N/A indicates that the operator's website does not offer a postal ticket delivery service.</li>
-    </ol>
 
     <h2 id="sales-receipt">Sales Receipt</h2>
     <div class="table-wrapper">
